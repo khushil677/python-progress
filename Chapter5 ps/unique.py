@@ -1,0 +1,21 @@
+##Prints all unique numbers by a user
+
+s = set()
+n = input("Enter number: ")
+s.add(int(n))
+n = input("Enter number: ")
+s.add(int(n))
+n = input("Enter number: ")
+s.add(int(n))
+n = input("Enter number: ")
+s.add(int(n))
+n = input("Enter number: ")
+s.add(int(n))
+n = input("Enter number: ")
+s.add(int(n))
+n = input("Enter number: ")
+s.add(int(n))
+n = input("Enter number: ")
+s.add(int(n))
+
+print(s)
