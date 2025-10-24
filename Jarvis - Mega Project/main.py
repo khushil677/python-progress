@@ -3,16 +3,55 @@ import webbrowser as wb
 import pyttsx3
 import musicLibrary
 import requests
+from openai import OpenAI
+from gtts import gTTS
+import pygame
+import os
 
 
 recognizer = sr.Recognizer()
 engine = pyttsx3.init(driverName='sapi5')
 
-newsapi = "045a45b18fb042f8b3ee20f1c877684a"
+newsapi = ""
 
-def speak(text):
+def speak_old(text):
     engine.say(text)
     engine.runAndWait()
+
+def speak(text):
+    tts = gTTS(text)
+    tts.save('temp.mp3') 
+
+    # Initialize Pygame mixer
+    pygame.mixer.init()
+
+    # Load the MP3 file
+    pygame.mixer.music.load('temp.mp3')
+
+    # Play the MP3 file
+    pygame.mixer.music.play()
+
+    # Keep the program running until the music stops playing
+    while pygame.mixer.music.get_busy():
+        pygame.time.Clock().tick(10)
+    
+    pygame.mixer.music.unload()
+    os.remove("temp.mp3") 
+
+def aiProcess(command):
+    client = OpenAI(api_key="",
+    )
+
+    completion = client.chat.completions.create(
+    model="gpt-3.5-turbo",
+    messages=[
+        {"role": "system", "content": "You are a virtual assistant named jarvis skilled in general tasks like Alexa and Google Cloud. Give 100 word responses please"},
+        {"role": "user", "content": command}
+    ]
+    )
+
+    return completion.choices[0].message.content
+
 
 def processCommand(c):
     if c.lower() == "open google":
@@ -37,13 +76,14 @@ def processCommand(c):
     
     else:
          #Let openAI handle the request
-         
+        output = aiProcess(c)
+        speak(output) 
 
                    
 
 
 if __name__ == "__main__":
-        speak("Initializing Jarvis . . . ")
+        speak("Initializing jarvis . . . ")
         while True:
             #Listen for the word "Jarvis"
             r = sr.Recognizer()
@@ -63,7 +103,7 @@ if __name__ == "__main__":
                 
                 #listen for command
                     with sr.Microphone() as source:
-                        print("Jarvis active ...")    
+                        print("jarvis active ...")    
                         audio = r.listen(source, timeout=5, phrase_time_limit=5)
                         command = r.recognize_google(audio)
 
